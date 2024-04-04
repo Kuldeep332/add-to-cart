@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Added Items</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .item {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .item img {
+    width: 100px;
+    height: 100px;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 10px;
+  }
+
+  .item h2 {
+    text-align: center;
+  }
+
+  .item-details p {
+    margin-bottom: 10px;
+  }
+
+  .quantity {
+    text-align: center;
+  }
+
+  .quantity-btn {
+    background-color: #ccc;
+    border: none;
+    color: #333;
+    font-weight: bold;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  .buy-btn {
+    background-color: #4caf50;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .total-amount {
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .total-amount .amount {
+    color: #4caf50;
+  }
+
+</style>
+<body>
+  <h1>Added Items</h1>
+  <% if (cartItems && cartItems.length > 0) { %>
+  <ul>
+    <% cartItems.forEach(item => { %>
+    <li class="item">
+      <div class="item-details">
+        <h2><%= item.productName %></h2>
+        <img src="/images/uploads/<%= item.productImage %>" alt="<%= item.productName %>">
+        <p>Price: $<span class="price"><%= item.price %></span></p>
+        <div class="quantity">
+          <button class="quantity-btn decrease" onclick="updateQuantity('<%= item._id %>', -1)">-</button>
+          <span id="quantity-<%= item._id %>" class="quantity-value"><%= item.quantity %></span>
+          <button class="quantity-btn increase" onclick="updateQuantity('<%= item._id %>', 1)">+</button>
+        </div>
+        <p class="total-amount">Total: $<span id="total-amount-<%= item._id %>" class="amount"><%= item.price * item.quantity %></span></p>
+        <button class="buy-btn">Buy</button>
+      </div>
+    </li>
+    <% }); %>
+  </ul>
+  <% } else { %>
+  <p>No items added to the cart yet.</p>
+  <% } %>
+  <script src="script.js"></script>
+  <script>
+    function updateQuantity(productId, change) {
+      const quantityElement = document.querySelector(`#quantity-${productId}`);
+      let quantity = parseInt(quantityElement.textContent) + change;
+      if (quantity >= 1) {
+        quantityElement.textContent = quantity;
+        updateTotalAmount(productId);
+      }
+    }
+
+    function updateTotalAmount(productId) {
+      const quantityElement = document.querySelector(`#quantity-${productId}`);
+      const priceElement = document.querySelector(`#total-amount-${productId}`);
+      let quantity = parseInt(quantityElement.textContent);
+      let price = parseFloat(priceElement.textContent) / (quantity - 1 || 1); // Calculate price per item
+      priceElement.textContent = quantity * price;
+    }
+  </script>
+</body>
+</html>
